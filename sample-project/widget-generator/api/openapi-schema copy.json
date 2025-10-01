@@ -1,0 +1,283 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Discovered API",
+    "version": "1.0.0",
+    "description": "OpenAPI 3.1.1 specification for discovered endpoints."
+  },
+  "servers": [
+    {
+      "url": "https://api.nasa.gov/DONKI/CMEAnalysis?api_key=HkmNxe64CqdxsDd5LZWKCLqwUBHGXvGr2twLdd4j, https://hrhub.idealforliving.com/api/v1/shifts/"
+    },
+    {
+      "url": "https://hrhub.idealforliving.com/api/v1/teams/"
+    },
+    {
+      "url": "https://hrhub.idealforliving.com/api/v2/schedules/employees/"
+    },
+    {
+      "url": "https://orchestration.idealforliving.com/api/v1/feature_flags/"
+    },
+    {
+      "url": "https://orchestration.idealforliving.com/api/v1/files/"
+    }
+  ],
+  "paths": {
+    "/DONKI/CMEAnalysis": {
+      "get": {
+        "summary": "Get CME Analysis",
+        "description": "Retrieves CME Analysis data from NASA DONKI API.",
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/shifts/": {
+      "get": {
+        "summary": "Get Shifts",
+        "description": "Retrieves a list of shifts.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/": {
+      "get": {
+        "summary": "Get Teams",
+        "description": "Retrieves a list of teams.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListObjectError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/schedules/employees/": {
+      "get": {
+        "summary": "Get Employee Schedules",
+        "description": "Retrieves employee schedules.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictEndswithError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feature_flags/": {
+      "get": {
+        "summary": "Get Feature Flags",
+        "description": "Retrieves feature flags.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictEndswithError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/": {
+      "get": {
+        "summary": "Get Files",
+        "description": "Retrieves files.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictEndswithError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ForbiddenError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "403 Client Error: Forbidden for url: https://api.nasa.gov/DONKI/CMEAnalysis?api_key=HkmNxe64CqdxsDd5LZWKCLqwUBHGXvGr2twLdd4j,%20https://hrhub.idealforliving.com/api/v1/shifts/"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "ListObjectError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "'list' object has no attribute 'items'"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "DictEndswithError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "'dict' object has no attribute 'endswith'"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  }
+}

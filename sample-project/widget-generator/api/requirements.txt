@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+celery[redis]
+redis
+pydantic
+pydantic-settings
+langchain
+langchain_community
+langchain-openai

@@ -1,0 +1,374 @@
+Generate a React code widget based on the following specifications. Your output MUST be a single, valid, copy-paste-ready JavaScript file (NOT a template literal or string), with all brackets and semicolons closed. DO NOT output markdown, explanations, backticks, comments, instructions, or incomplete/truncated code. If the code is too long to fit, output a minimal, working version that demonstrates the main logic, and do NOT output incomplete or truncated code.
+
+The widget should function as a direct, quick insights tool to rapidly display key data or information as creatively as possible.
+
+CODE STRUCTURE (MANDATORY):
+
+LIVE DATA RULE:
+All data displayed in the widget MUST be fetched live from the actual API endpoints discovered and provided in the OpenAPI schema or prompt context.
+DO NOT use any mock, demo, placeholder, or example endpoints (such as "https://shiftapi.dev/api/shifts", "https://example.com", or similar).
+DO NOT use any mock, demo, or hardcoded data arrays.
+DO NOT simulate data or use placeholder arrays for demonstration.
+If the API fetch fails or is loading, show a loading or error state in the UI.
+NEVER use any variable or array named "DEMO", "MOCK", "SAMPLE", or similar.
+ALWAYS use the real endpoint URLs exactly as provided in the OpenAPI schema or prompt context, and fetch live data from them.
+
+HOOKS RULE:
+All React hooks (useState, useEffect, useRef, etc.) must be called unconditionally and in the same order on every render.
+**Never call hooks inside any if statement, loop, or after a return. All hooks must be at the top level of the component, before any logic, conditions, or returns.**
+This prevents errors such as "Rendered more hooks than during the previous render." If you break this rule, the widget will crash with a React error.
+For more information, see: https://react.dev/link/rules-of-hooks
+
+1. Use JavaScript syntax with functional components using React.createElement() - DO NOT use JSX syntax.
+2. Implement the following user description: \"""" + description + """\""".
+
+OPENAPI SCHEMA CONTEXT:
+The following OpenAPI 3.1.1 schema describes all available API endpoints, their paths, authentication requirements, and data structures. 
+You MUST use only the endpoints and authentication methods defined in this schema for all data fetching in the widget.
+If an endpoint requires authentication or custom headers, you MUST use a prop named headersMap (an object mapping endpoint URLs to headers) that is passed to your WidgetComponent.
+- **Your WidgetComponent MUST also accept a darkMode prop (boolean) and use it for all color and style logic. The parent dashboard will toggle this prop for all widgets.**
+- For each fetch call, select the correct headers for the endpoint from headersMap and use them in the fetch options.
+- **You MUST NOT hardcode any headers or API keys in the code. All headers must come from the headersMap prop.**
+- **You MUST NOT use any placeholder or variable for the headers (such as __INJECT_HEADERS_HERE__).**
+- **You MUST NOT include both a hardcoded headers object and a dynamic headers object in the same fetch call. Only use the dynamic headers from headersMap.**
+- Example:
+  ```js
+  // headersMap is passed as a prop to your WidgetComponent
+  const headers = headersMap[API_URL] || {};
+  fetch(API_URL, { headers })
+  ```
+- For all style values, use string concatenation (e.g., "1px solid " + (darkMode ? COLORS.darkDivider : COLORS.grey300)), not template literals.
+- **Every child in a list (e.g., in map over arrays for <option>, <li>, etc.) must have a unique, non-undefined key prop. If a unique id is not available, use the array index as a fallback (e.g., key={item.id || idx}).**
+- **All array operations (map, forEach, length, etc.) must be guarded with null/undefined checks. All map callbacks must declare the index parameter (e.g., .map((item, idx) => ...)).**
+- **All widgets must use a custom, thin, aesthetic scrollbar with no background. Use the following configuration for all scrollable areas:**
+  ```js
+  // Add this style object to any scrollable div:
+  {
+    scrollbarWidth: "thin", // Firefox
+    scrollbarColor: "#4A00E0 transparent", // Firefox
+    // For Webkit browsers:
+    "::-webkit-scrollbar": { width: "6px", background: "transparent" },
+    "::-webkit-scrollbar-thumb": { background: "#4A00E0", borderRadius: "3px" },
+    "::-webkit-scrollbar-track": { background: "transparent" }
+  }
+  ```
+  - If using inline styles, you may need to use a <style> tag with the above CSS selectors for ::-webkit-scrollbar.
+- **Widgets must have NO border, as the parent container already provides the border.**
+- **All widgets must have a uniform structure:**
+  - A widget title section (fixed height: 48px, flexbox centered vertically and horizontally, font size 16px, font weight 600, color #344054, background transparent)
+  - A horizontal line (divider) below the title (height: 1px, color #D0D5DD, margin: 0)
+  - A content area below the divider (flex: 1, overflow: auto, uses the custom scrollbar)
+OPENAPI_SCHEMA_PLACEHOLDER
+3. Use inline styles with the style property in React.createElement() calls — DO NOT use styled-components or any CSS-in-JS library.
+4. DO NOT use import or export statements except as specified below. Access React hooks via const { useState, useEffect } = React;
+5. Use regular function declaration syntax: const WidgetComponent = () => { ... };
+6. Use React.createElement() for all elements instead of JSX. Format: React.createElement(elementType, props, ...children)
+7. Structure the code as: const WidgetComponent = () => { /* component logic */ return React.createElement(...); };
+8. DO NOT output markdown, code fences, or explanations. Output ONLY the code.
+
+
+DESIGN SYSTEM:
+Follow this design system to match our established UI patterns:
+
+CONTAINER CONSTRAINT:
+The widget will be rendered inside a 640x640px container. All content must fit perfectly within this area, with no overflow or unnecessary gaps. Use scrollable areas if needed for overflow content. Avoid fixed margins or paddings that would cause clipping.
+This is the parent container component:
+
+    <Box
+      sx={{
+        width: 640,
+        height: 640,
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        boxShadow: 2,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 2,
+        m: 1,
+        overflow: "hidden",
+      }}
+    >
+      <BabelTranspiler code={widgetCode} componentName={componentName} />
+    </Box>
+
+
+
+1. Colors:
+   - Primary Main: #4A00E0 (purple)
+   - Secondary Main: #FE6C5F (coral red)
+   - Text Primary: #344054 (dark gray)
+   - Text Secondary: #667085 (medium gray)
+   - Common White: #FFFFFF
+   - Grey 100: #F2F4F7
+   - Grey 300: #D0D5DD
+   - Grey 400: #98A2B3
+   - Grey 500: #667085
+   - Grey 800: #1D2939
+   - Divider: #5C5FEF22
+
+2. Card Style:
+   - Background: white
+   - Border: 1px solid #D0D5DD
+   - Border Radius: 8px
+   - Box Shadow: 0 2px 10px rgba(0, 0, 0, 0.1)
+   - Internal padding: 16px
+
+3. Typography:
+   - Font Family: system-ui, sans-serif
+   - Heading size: 16px, 600 weight, #344054 color
+   - Description/body: 12px, bold, #344054 color
+   - Secondary text: 10px, normal, #667085 color
+
+4. Icons & Avatars:
+   - Icon container: 24px x 24px, rounded corners (4px), #4A00E0 with 0.1 opacity as background
+   - Icon size: 14px
+   - Icon color: #4A00E0
+
+5. Item Layout:
+   - Each item has 16px padding
+   - Items are stacked vertically in a list
+   - Dividers between items: 1px solid #D0D5DD
+   - Item hover background: rgba(254, 108, 95, 0.1)
+
+6. Hover Effects:
+   - Items should have hover effect changing background color to rgba(254, 108, 95, 0.1)
+   - Cursor should change to pointer on hoverable elements
+
+7. Empty State:
+   - Centered vertically and horizontally
+   - Bold heading (#344054) with descriptive subtext (#667085)
+   - Text aligned center
+
+8. Dark Mode Support:
+   - In dark mode:
+     * Background: #101828
+     * Text primary: #F2F4F7
+     * Text secondary: #98A2B3
+     * Dividers: #1D2939
+     * Icons: white
+     * Icon containers: solid #4A00E0
+
+9. Widget Structure:
+   - Header with title and optional action button
+   - Content area with scrollable list
+   - Empty state when no data
+   - Fixed height container with scrollable overflow
+
+10. Do not add any title to the widget directly
+
+For data visualization, use this color scheme to represent different categories:
+- Primary: #4A00E0 (purple)
+- Secondary: #FE6C5F (coral)
+- Third: #2EC854 (green)
+- Fourth: #FF9F39 (orange)
+- Fifth: #5D5FEF (blue)
+
+CHECKLIST (LLM MUST SELF-VERIFY BEFORE OUTPUT):
+
+- [ ] All data is fetched live from the actual API endpoints provided in the OpenAPI schema or prompt context. No mock, demo, placeholder, or example endpoints are used.
+- [ ] If any headers are required for authentication, the widget loads DATASOURCE_AUTH_HEADERS from the .env file, parses it as JSON, and uses the correct headers for the endpoint in the fetch call. **No hardcoded headers, API keys, or duplicate headers objects are present anywhere in the code.**
+- [ ] No mock, demo, or hardcoded data is used.
+- [ ] No syntax errors: all code is valid JavaScript, with all semicolons, brackets, and parentheses closed.
+- [ ] All array methods (e.g., .map, .some, .filter) are only called on arrays, with type checks if needed. All map callbacks declare the index parameter.
+- [ ] No TypeScript, JSX, or non-JS syntax is used.
+- [ ] No hooks are called inside any if, loop, or after a return. All hooks are at the top level of the component.
+- [ ] No markdown, code fences, or explanations present
+- [ ] All brackets, parentheses, and backticks are closed
+- [ ] Only one WidgetComponent is exported
+- [ ] Every child in a list (e.g., in map over arrays for <option>, <li>, etc.) has a unique, non-undefined key prop. If a unique id is not available, the array index is used as a fallback.
+- [ ] The output is plain JavaScript code, not a template literal or string (no wrapping backticks).
+- [ ] The output is complete, valid JavaScript code, with no incomplete expressions, missing brackets, or truncation. If the code is too long, a minimal, working version is output.
+- [ ] All scrollable areas use the specified custom, thin, aesthetic scrollbar with no background.
+- [ ] The widget has NO border.
+- [ ] The widget has a uniform structure: fixed-height title section (48px), horizontal divider, and content area.
+- [ ] All requirements above are followed
+
+ONE-SHOT EXAMPLE:
+
+// Output is plain JavaScript code, NOT wrapped in backticks or as a string.
+const WidgetComponent = ({ headersMap, darkMode }) => {
+  const { useState, useEffect } = React;
+
+  const POKEMON_API = "https://pokeapi.co/api/v2/";
+
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  const [speciesList, setSpeciesList] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [evolutionChain, setEvolutionChain] = useState(null);
+  const [triggerMap, setTriggerMap] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Example of authenticated fetch using ONLY dynamic headers from headersMap prop
+    const headers = headersMap[POKEMON_API + "pokemon-species?limit=151"] || {};
+    fetch(POKEMON_API + "pokemon-species?limit=151", { headers })
+      .then((res) => res.json())
+      .then((data) => setSpeciesList(data.results))
+      .catch(() => setError("Failed to load species list"));
+  }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    setLoading(true);
+    setError(null);
+    setEvolutionChain(null);
+    setTriggerMap({});
+
+    fetch(`${POKEMON_API}pokemon-species/${selected}`)
+      .then((res) => res.json())
+      .then(async (speciesData) => {
+        const evoChainUrl = speciesData.evolution_chain.url;
+        const evoChainData = await fetch(evoChainUrl).then((res) => res.json());
+        setEvolutionChain(evoChainData.chain);
+
+        const triggerUrls = new Set();
+        function collectTriggers(node) {
+          node.evolution_details.forEach((ed) => {
+            if (ed.trigger && ed.trigger.url) triggerUrls.add(ed.trigger.url);
+          });
+          node.evolves_to.forEach(collectTriggers);
+        }
+        collectTriggers(evoChainData.chain);
+
+        const triggerArr = await Promise.all(
+          Array.from(triggerUrls).map((url) =>
+            fetch(url)
+              .then((res) => res.json())
+              .catch(() => null)
+          )
+        );
+        const triggerMapObj = {};
+        triggerArr.forEach((t) => {
+          if (t) triggerMapObj[t.name] = t;
+        });
+        setTriggerMap(triggerMapObj);
+      })
+      .catch(() => setError("Failed to load evolution chain"))
+      .finally(() => setLoading(false));
+  }, [selected]);
+
+  // Custom scrollbar CSS
+  React.useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #4A00E0 transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #4A00E0;
+        border-radius: 3px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
+  }, []);
+
+  function renderEvolution(node, depth = 0) {
+    if (!node) return null;
+    return (
+      React.createElement("div", { style: { marginLeft: (depth * 24) + "px", marginTop: "8px" } },
+        React.createElement("div", null,
+          React.createElement("strong", null, capitalize(node.species.name)),
+          node.evolution_details.length > 0 && (
+            React.createElement("ul", null,
+              node.evolution_details.map((ed, idx) => {
+                const trigger = ed.trigger?.name;
+                const triggerObj = trigger ? triggerMap[trigger] : null;
+                return React.createElement("li", { key: idx },
+                  React.createElement("span", null,
+                    triggerObj
+                      ? (triggerObj.names.find((n) => n.language.name === "en")?.name || capitalize(trigger))
+                      : capitalize(trigger || "")
+                  ),
+                  ed.min_level && React.createElement("span", null, " (Level ", ed.min_level, ")"),
+                  ed.item && React.createElement("span", null, " (Item: ", capitalize(ed.item.name), ")")
+                );
+              })
+            )
+          )
+        ),
+        node.evolves_to &&
+          node.evolves_to
+            .slice()
+            .sort((a, b) => a.species.name.localeCompare(b.species.name))
+            .map((child, idx) =>
+              React.createElement("div", { key: idx }, renderEvolution(child, depth + 1))
+            )
+      )
+    );
+  }
+
+  // Widget structure: title, divider, content
+  return (
+    React.createElement("div", { style: { width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "transparent", border: "none", fontFamily: "sans-serif" } },
+      // Title section (fixed height)
+      React.createElement("div", {
+        style: {
+          height: "48px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "16px",
+          fontWeight: 600,
+          color: "#344054",
+          background: "transparent"
+        }
+      }, "Pokémon Evolution Explorer"),
+      // Divider
+      React.createElement("div", {
+        style: {
+          height: "1px",
+          width: "100%",
+          background: "#D0D5DD",
+          margin: 0
+        }
+      }),
+      // Content area (scrollable, custom scrollbar)
+      React.createElement("div", {
+        className: "custom-scrollbar",
+        style: {
+          flex: 1,
+          overflow: "auto",
+          padding: "16px"
+        }
+      },
+        React.createElement("p", null, "Select a Pokémon species to explore its full evolution chain, including all stages, triggers, and branches."),
+        React.createElement("div", null,
+          React.createElement("select", {
+            value: selected || "",
+            onChange: (e) => setSelected(e.target.value)
+          },
+            React.createElement("option", { value: "" }, "Select a species"),
+            speciesList.map((s, idx) =>
+              React.createElement("option", { key: s.name || idx, value: s.name }, capitalize(s.name))
+            )
+          )
+        ),
+        loading && React.createElement("div", null, "Loading..."),
+        error && React.createElement("div", { style: { color: "red" } }, error),
+        evolutionChain && (
+          React.createElement("div", { style: { marginTop: 24 } },
+            React.createElement("h3", null, "Evolution Chain"),
+            renderEvolution(evolutionChain)
+          )
+        )
+      )
+    )
+  );
+};
+
+exports.WidgetComponent = WidgetComponent;

@@ -1,0 +1,642 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Ideal For Living API",
+    "version": "1.0.0",
+    "description": "API for managing HR Hub resources (shifts, teams, schedules) and Orchestration resources (feature flags, files)"
+  },
+  "servers": [
+    {
+      "url": "https://hrhub.idealforliving.com",
+      "description": "HR Hub API Server"
+    },
+    {
+      "url": "https://orchestration.idealforliving.com",
+      "description": "Orchestration API Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "HR Hub",
+      "description": "HR Hub endpoints for shifts, teams, and employee schedules"
+    },
+    {
+      "name": "Orchestration",
+      "description": "Orchestration endpoints for feature flags and file management"
+    }
+  ],
+  "paths": {
+    "/api/v1/shifts/": {
+      "get": {
+        "summary": "Get shifts",
+        "description": "Retrieve a paginated list of shifts",
+        "operationId": "getShifts",
+        "servers": [
+          {
+            "url": "https://hrhub.idealforliving.com"
+          }
+        ],
+        "tags": ["HR Hub"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of results to return per page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://hrhub.idealforliving.com/api/v1/shifts/?page=4"
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://hrhub.idealforliving.com/api/v1/shifts/?page=2"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Shift"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/": {
+      "get": {
+        "summary": "Get teams",
+        "description": "Retrieve a list of teams",
+        "operationId": "getTeams",
+        "servers": [
+          {
+            "url": "https://hrhub.idealforliving.com"
+          }
+        ],
+        "tags": ["HR Hub"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Team"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/schedules/employees/": {
+      "get": {
+        "summary": "Get employee schedules",
+        "description": "Retrieve a paginated list of employee schedules",
+        "operationId": "getEmployeeSchedules",
+        "servers": [
+          {
+            "url": "https://hrhub.idealforliving.com"
+          }
+        ],
+        "tags": ["HR Hub"],
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "query",
+            "description": "Employee ID",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "employeeIdIn",
+            "in": "query",
+            "description": "Multiple employee IDs (comma-separated)",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of results to return per page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "scheduleId",
+            "in": "query",
+            "description": "Schedule ID",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://hrhub.idealforliving.com/api/v2/schedules/employees/?page=4"
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://hrhub.idealforliving.com/api/v2/schedules/employees/?page=2"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EmployeeSchedule"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feature_flags/": {
+      "get": {
+        "summary": "Get feature flags",
+        "description": "Retrieve a paginated list of feature flags",
+        "operationId": "getFeatureFlags",
+        "servers": [
+          {
+            "url": "https://orchestration.idealforliving.com"
+          }
+        ],
+        "tags": ["Orchestration"],
+        "parameters": [
+          {
+            "name": "isEnabled",
+            "in": "query",
+            "description": "Filter by enabled status",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "module",
+            "in": "query",
+            "description": "Filter by module",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "AI Chat Bot",
+                "AI Toolkit",
+                "Calendar",
+                "Chat",
+                "Dashboard",
+                "Global",
+                "HR Hub",
+                "Notifications",
+                "Orchestration",
+                "Profile",
+                "Projects",
+                "Tickets",
+                "Weaves"
+              ]
+            }
+          },
+          {
+            "name": "moduleIn",
+            "in": "query",
+            "description": "Multiple modules (comma-separated)",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "description": "Ordering fields",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["id", "-id", "name", "-name"]
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of results to return per page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://orchestration.idealforliving.com/api/v1/feature_flags/?page=4"
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://orchestration.idealforliving.com/api/v1/feature_flags/?page=2"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/FeatureFlag"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/": {
+      "get": {
+        "summary": "Get files",
+        "description": "Retrieve a paginated list of files",
+        "operationId": "getFiles",
+        "servers": [
+          {
+            "url": "https://orchestration.idealforliving.com"
+          }
+        ],
+        "tags": ["Orchestration"],
+        "parameters": [
+          {
+            "name": "idIn",
+            "in": "query",
+            "description": "Multiple file IDs (comma-separated)",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by file name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "description": "Ordering fields",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["id", "-id", "name", "-name", "updatedBy", "-updatedBy"]
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of results to return per page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "s3Key",
+            "in": "query",
+            "description": "Filter by S3 key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "s3KeyIn",
+            "in": "query",
+            "description": "Multiple S3 keys (comma-separated)",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": false
+          },
+          {
+            "name": "updatedBy",
+            "in": "query",
+            "description": "Filter by updater",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://orchestration.idealforliving.com/api/v1/files/?page=4"
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://orchestration.idealforliving.com/api/v1/files/?page=2"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/File"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Shift": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "fromTime": {
+            "type": "string"
+          },
+          "toTime": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "example": "Mid"
+          }
+        }
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "EmployeeSchedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "employeeId": {
+            "type": "integer"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-09-29"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-09-29"
+          },
+          "scheduleId": {
+            "type": "integer"
+          },
+          "scheduleName": {
+            "type": "string"
+          },
+          "scheduleColor": {
+            "type": "string"
+          }
+        }
+      },
+      "FeatureFlag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-29T06:13:21.565Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-29T06:13:21.565Z"
+          },
+          "module": {
+            "type": "string",
+            "example": "Weaves",
+            "enum": [
+              "AI Chat Bot",
+              "AI Toolkit",
+              "Calendar",
+              "Chat",
+              "Dashboard",
+              "Global",
+              "HR Hub",
+              "Notifications",
+              "Orchestration",
+              "Profile",
+              "Projects",
+              "Tickets",
+              "Weaves"
+            ]
+          }
+        }
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "False"
+          },
+          "s3Key": {
+            "type": "string"
+          },
+          "mime": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-29T06:13:38.804Z"
+          },
+          "presignedUploadUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "size": {
+            "type": "integer",
+            "maximum": 2147483647
+          },
+          "isNameUnique": {
+            "type": "boolean"
+          },
+          "presignedThumbnailUploadUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "presignedDownloadUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "presignedThumbnailDownloadUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    }
+  }
+}
